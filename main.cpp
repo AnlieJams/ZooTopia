@@ -1,161 +1,76 @@
-#include <iostream>
+﻿#include <iostream>
 using namespace std;
 
 
-class Herbivore {
+class PowerSystem {
 public:
-    virtual ~Herbivore() {}
-    virtual void eatGrass() = 0;
+    void powerOn() {
+        cout << "Включение питания стиральной машины" << endl;
+    }
+
+
+    void powerOff() {
+        cout << "Выключение питания стиральной машины" << endl;
+    }
 };
 
-
-class Wildebeest : public Herbivore {
+class WaterSystem {
 public:
-    void eatGrass() override {
-        cout << "Гну кушает травку." << endl;
+    void fillWater() {
+        cout << "Наполнение стиральной машины водой" << endl;
+    }
+
+    void drainWater() {
+        cout << "Слив воды из стиральной машины" << endl;
+    }
+};
+
+class SpinSystem {
+public:
+    void startSpin() {
+        cout << "Запуск центрифугирования" << endl;
+    }
+
+    void stopSpin() {
+        cout << "Остановка центрифугирования" << endl;
     }
 };
 
 
-class Bison : public Herbivore {
-public:
-    void eatGrass() override {
-        cout << "Буррито Бизон кушает травку." << endl;
-    }
-};
-
-
-class Elk : public Herbivore {
-public:
-    void eatGrass() override {
-        cout << "Лосяш кушает травку." << endl;
-    }
-};
-
-
-class Carnivore {
-public:
-    virtual ~Carnivore() {}
-    virtual void eat(Herbivore* herbivore) = 0;
-};
-
-
-class Lion : public Carnivore {
-public:
-    void eat(Herbivore* herbivore) override {
-        cout << "Король Лев кушает травку." << endl;
-    }
-};
-
-
-class Wolf : public Carnivore {
-public:
-    void eat(Herbivore* herbivore) override {
-        cout << "Волчара кушает травку." << endl;
-    }
-};
-
-class Tiger : public Carnivore {
-public:
-    void eat(Herbivore* herbivore) override {
-        cout << "Тигрррр кушает травку." << endl;
-    }
-};
-
-class Continent {
-public:
-    virtual ~Continent() {}
-    virtual Herbivore* createHerbivore() = 0;
-    virtual Carnivore* createCarnivore() = 0;
-};
-
-
-class Africa : public Continent {
-public:
-    Herbivore* createHerbivore() override {
-        return new Wildebeest();
-    }
-
-    Carnivore* createCarnivore() override {
-        return new Lion();
-    }
-};
-
-
-class NorthAmerica : public Continent {
-public:
-    Herbivore* createHerbivore() override {
-        return new Bison();
-    }
-
-    Carnivore* createCarnivore() override {
-        return new Wolf();
-    }
-};
-
-
-class Eurasia : public Continent {
-public:
-    Herbivore* createHerbivore() override {
-        return new Elk();
-    }
-
-    Carnivore* createCarnivore() override {
-        return new Tiger();
-    }
-};
-
-
-class AnimalWorld {
+class WashingMachineFacade {
 private:
-    Herbivore* herbivore;
-    Carnivore* carnivore;
+    PowerSystem powerSystem;
+    WaterSystem waterSystem;
+    SpinSystem spinSystem;
 
 public:
-    AnimalWorld(Continent* continent) {
-        herbivore = continent->createHerbivore();
-        carnivore = continent->createCarnivore();
+    void startWashing() {
+        powerSystem.powerOn();
+        waterSystem.fillWater();
+        spinSystem.startSpin();
+        cout << "Старт стирки" << std::endl;
     }
 
-    ~AnimalWorld() {
-        delete herbivore;
-        delete carnivore;
-    }
-
-    void herbivoreMeals() {
-        herbivore->eatGrass();
-    }
-
-    void carnivoreNutrition() {
-        carnivore->eat(herbivore);
+    void stopWashing() {
+        cout << "Остановка стирки" << std::endl;
+        spinSystem.stopSpin();
+        waterSystem.drainWater();
+        powerSystem.powerOff();
     }
 };
+
+
 
 int main() {
 
     setlocale(0, "");
 
-    Continent* africa = new Africa();
-    AnimalWorld* africaWorld = new AnimalWorld(africa);
-    africaWorld->herbivoreMeals();
-    africaWorld->carnivoreNutrition();
+    WashingMachineFacade washingMachine;
+    washingMachine.startWashing();
 
-    Continent* northAmerica = new NorthAmerica();
-    AnimalWorld* naWorld = new AnimalWorld(northAmerica);
-    naWorld->herbivoreMeals();
-    naWorld->carnivoreNutrition();
 
-    Continent* eurasia = new Eurasia();
-    AnimalWorld* eurasiaWorld = new AnimalWorld(eurasia);
-    eurasiaWorld->herbivoreMeals();
-    eurasiaWorld->carnivoreNutrition();
 
-    delete africa;
-    delete africaWorld;
-    delete northAmerica;
-    delete naWorld;
-    delete eurasia;
-    delete eurasiaWorld;
+    washingMachine.stopWashing();
 
     return 0;
 }
